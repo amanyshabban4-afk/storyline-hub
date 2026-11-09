@@ -1,12 +1,80 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Storyline Hub</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore interactive learning templates for Articulate Storyline.">
+  <title>Storyline Hub | Interactive Learning Templates</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to Storyline Hub!</h1>
-    <p>Your Interactive Learning Template Library</p>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#home"><span class="brand-icon">◆</span> Storyline <span>Hub</span></a>
+      <span class="nav-label">TEMPLATE LIBRARY</span>
+    </div>
+  </header>
+  <main id="home" class="container">
+    <section class="hero">
+      <span class="eyebrow">BUILD BETTER LEARNING EXPERIENCES</span>
+      <h1>Interactive Learning <span>Starts Here.</span></h1>
+      <p>Explore ready-to-use Articulate Storyline templates and bring your learning experiences to life.</p>
+      <label class="search-wrap" for="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search templates..." autocomplete="off"></label>
+    </section>
+    <section class="library" aria-labelledby="library-heading">
+      <div class="section-heading"><div><span class="eyebrow">EXPLORE THE COLLECTION</span><h2 id="library-heading">Template Library</h2></div><span id="count" class="count"></span></div>
+      <div class="filters" role="group" aria-label="Filter templates">
+        <button class="filter active" data-category="All" aria-pressed="true">All</button>
+        <button class="filter" data-category="Drag & Drop" aria-pressed="false">Drag & Drop</button>
+        <button class="filter" data-category="Games" aria-pressed="false">Games</button>
+        <button class="filter" data-category="Interactive Screens" aria-pressed="false">Interactive Screens</button>
+        <button class="filter" data-category="Web Objects" aria-pressed="false">Web Objects</button>
+      </div>
+      <div id="cards" class="cards"></div>
+      <p id="empty" class="empty" hidden>No templates match your search.</p>
+    </section>
+  </main>
+  <footer class="footer"><div class="container">© <span id="year"></span> Storyline Hub · Made for learning designers</div></footer>
+  <script>
+    // Sample content only. Replace preview images and download URLs with your own assets.
+    const templates = [
+      {title:'Drag & Drop Sorting',category:'Drag & Drop',description:'Sort items into categories with an engaging drag-and-drop interaction.',image:'https://placehold.co/960x600/1a2341/c9b3ff?text=Drag+%26+Drop+Sorting',download:''},
+      {title:'Escape Room Challenge',category:'Games',description:'Turn learning into an exciting puzzle-based challenge.',image:'https://placehold.co/960x600/211936/d4b5ff?text=Escape+Room',download:''},
+      {title:'Interactive Hotspots',category:'Interactive Screens',description:'Let learners explore key information at their own pace.',image:'https://placehold.co/960x600/152b3b/9fe5ff?text=Interactive+Hotspots',download:''},
+      {title:'Custom Web Object',category:'Web Objects',description:'Extend your Storyline project with a custom HTML interaction.',image:'https://placehold.co/960x600/20203d/c7c7ff?text=Web+Object',download:''}
+    ];
+    const cards = document.querySelector('#cards');
+    const search = document.querySelector('#search');
+    const count = document.querySelector('#count');
+    const empty = document.querySelector('#empty');
+    let category = 'All';
+    function render() {
+      const query = search.value.trim().toLowerCase();
+      const filtered = templates.filter(t => (category === 'All' || t.category === category) && (t.title+' '+t.description+' '+t.category).toLowerCase().includes(query));
+      cards.replaceChildren();
+      filtered.forEach(t => {
+        const article = document.createElement('article'); article.className='template-card';
+        const img = document.createElement('img'); img.src=t.image; img.alt=`Preview of ${t.title}`; img.loading='lazy';
+        const body = document.createElement('div'); body.className='card-body';
+        const tag = document.createElement('span'); tag.className='tag'; tag.textContent=t.category;
+        const heading = document.createElement('h3'); heading.textContent=t.title;
+        const desc = document.createElement('p'); desc.textContent=t.description;
+        const link = document.createElement('a'); link.className='download';
+        if (t.download) { link.href=t.download; link.textContent='↓ Download Template'; link.setAttribute('download',''); }
+        else { link.textContent='Coming Soon'; link.classList.add('disabled'); link.setAttribute('aria-disabled','true'); }
+        body.append(tag,heading,desc,link); article.append(img,body); cards.append(article);
+      });
+      count.textContent=`${filtered.length} template${filtered.length===1?'':'s'}`;
+      empty.hidden=filtered.length!==0;
+    }
+    document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => {
+      category=button.dataset.category;
+      document.querySelectorAll('.filter').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});
+      render();
+    }));
+    search.addEventListener('input',render);
+    document.querySelector('#year').textContent=new Date().getFullYear();
+    render();
+  </script>
 </body>
 </html>
